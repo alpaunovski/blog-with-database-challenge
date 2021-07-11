@@ -1,0 +1,6 @@
+#Here is the plan of the game
+#We will not toy with local databases this time
+
+#1. We go to MongoDB Atlas and create a Database.
+#2. We connect the local app with Atlas.
+#3. We use the code from todolist_v1 challenge as an example.

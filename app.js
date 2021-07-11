@@ -13,58 +13,83 @@ const app = express();
 
 app.set('view engine', 'ejs');
 
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
+
+//MongoDB Atlas connection and initialization
+const mongoose = require("mongoose");
+mongoose.connect("mongodb+srv://admin-angela:Test123@cluster0.owyqd.mongodb.net/blog-with-database-challenge?retryWrites=true&w=majority");
+
+//Defime the Schema object
+const { Schema } = mongoose;
+
+//Define the Posts schema with input validation so we don't have posts with no title or body.
+
+const postsSchema = new Schema({
+    title: {
+        type: String,
+        required: true
+    },
+    body: {
+        type: String,
+        required: true
+    }
+});
+
+//Define a Post
+
+const Post = mongoose.model("Post", postsSchema);
+
 
 let posts = [];
 
-app.get("/", function(req, res){
-  res.render("home", {
-    startingContent: homeStartingContent,
-    posts: posts
+app.get("/", function(req, res) {
+    res.render("home", {
+        startingContent: homeStartingContent,
+        posts: posts
     });
 });
 
-app.get("/about", function(req, res){
-  res.render("about", {aboutContent: aboutContent});
+app.get("/about", function(req, res) {
+    res.render("about", { aboutContent: aboutContent });
 });
 
-app.get("/contact", function(req, res){
-  res.render("contact", {contactContent: contactContent});
+app.get("/contact", function(req, res) {
+    res.render("contact", { contactContent: contactContent });
 });
 
-app.get("/compose", function(req, res){
-  res.render("compose");
+app.get("/compose", function(req, res) {
+    res.render("compose");
 });
 
-app.post("/compose", function(req, res){
-  const post = {
-    title: req.body.postTitle,
-    content: req.body.postBody
-  };
+app.post("/compose", function(req, res) {
+    const post = {
+        title: req.body.postTitle,
+        content: req.body.postBody
+    };
 
-  posts.push(post);
+    posts.push(post);
 
-  res.redirect("/");
+    res.redirect("/");
 
 });
 
-app.get("/posts/:postName", function(req, res){
-  const requestedTitle = _.lowerCase(req.params.postName);
+app.get("/posts/:postName", function(req, res) {
+    const requestedTitle = _.lowerCase(req.params.postName);
 
-  posts.forEach(function(post){
-    const storedTitle = _.lowerCase(post.title);
+    posts.forEach(function(post) {
+        const storedTitle = _.lowerCase(post.title);
 
-    if (storedTitle === requestedTitle) {
-      res.render("post", {
-        title: post.title,
-        content: post.content
-      });
-    }
-  });
+        if (storedTitle === requestedTitle) {
+            res.render("post", {
+                title: post.title,
+                content: post.content
+            });
+        }
+    });
 
 });
 
 app.listen(3000, function() {
-  console.log("Server started on port 3000");
+    console.log("Server started on port 3000");
 });
